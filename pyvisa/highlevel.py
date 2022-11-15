@@ -2612,7 +2612,13 @@ class VisaLibraryBase(object):
             Return value of the library call.
 
         """
-        raise NotImplementedError
+        try:
+            sess = self.sessions[session]
+        except KeyError:
+            return constants.StatusCode.error_invalid_object
+
+        return sess.control_transfer(request_type_bitmap_field, request_id, request_value, index, length)
+
 
     def usb_control_out(
         self,
@@ -2650,7 +2656,13 @@ class VisaLibraryBase(object):
             Return value of the library call.
 
         """
-        raise NotImplementedError
+        try:
+            sess = self.sessions[session]
+        except KeyError:
+            return constants.StatusCode.error_invalid_object
+
+        sess.control_transfer(request_type_bitmap_field, request_id, request_value, index, data)
+        return constants.StatusCode(0)
 
     def vxi_command_query(
         self, session: VISASession, mode: constants.VXICommands, command: int
